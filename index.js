@@ -54,6 +54,8 @@ function handle_static_payreq(opts, req, res)
 	const resp = {
 		status: "OK",
 		tag: "payRequest",
+		minSendable: 1,
+		maxSendable: 10000000000,
 		callback: opts.callback,
 		metadata: JSON.stringify([
 			["text/plain", opts.description || "Hello from jb55.com!"]
