@@ -86,6 +86,7 @@ async function handle_payreq(opts, req, res)
 
 async function handle_request(opts, req, res)
 {
+	console.log("%s - %s", req.method, req.url)
 	if (req.method == "GET" && req.url == "/") {
 		handle_static_payreq(opts, req, res)
 		return
