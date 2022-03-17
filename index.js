@@ -100,6 +100,11 @@ async function handle_request(opts, req, res)
 module.exports = create_server
 
 
+
+
+// bin stuff (move this?)
+
+
 async function main()
 {
 	const args = process.argv.slice(2)

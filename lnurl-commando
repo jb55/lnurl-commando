@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+const create_server = require('./')
+// bin stuff (move this?)
+
+
+async function main()
+{
+	const args = process.argv.slice(2)
+	const opts = {
+		nodeid: args[0] || process.env.NODEID,
+		host: args[1] || process.env.HOST,
+		rune: args[2] || process.env.RUNE,
+		callback: args[3] || process.env.LNURL_CALLBACK,
+		description: args[4] || process.env.INVOICE_DESCRIPTION,
+	}
+
+	if (!opts.nodeid || !opts.host || !opts.rune || !opts.callback)
+		return usage()
+
+	const server = await create_server(opts)
+
+	const port = +process.env.PORT || 8083
+	console.log("lnurl-commando listening on port " + port)
+	server.listen(port)
+}
+
+if (!module.parent) {
+	main()
+}
+
+
+function usage() {
+	console.log("usage: lnurl-commando <nodeid> <commando-host> <rune> <lnurl-callback> <invoice-description>")
+	process.exit(1)
+}
