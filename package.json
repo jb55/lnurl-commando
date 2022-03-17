@@ -6,7 +6,9 @@
     "url": "https://github.com/jb55/lnurl-commando"
   },
   "main": "index.js",
-  "bin": "lnurl-commando",
+  "bin": {
+	"lnurl-commando": "./lnurl-commando"
+  },
   "dependencies": {
     "lnsocket": "^0.2.3"
   }
