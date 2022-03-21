@@ -66,12 +66,10 @@ function handle_static_payreq(opts, req, res)
 	res.end()
 }
 
-async function handle_payreq(opts, req, res)
+async function handle_payreq(amount, opts, req, res)
 {
-	const parsed = url.parse(req.url)
-	const qs = querystring.parse(parsed.query)
 	try {
-		const pr = await make_invoice(opts, qs.amount)
+		const pr = await make_invoice(opts, amount)
 		const routes = []
 		const resp = JSON.stringify({pr, routes})
 		res.statusCode = 200
@@ -84,15 +82,20 @@ async function handle_payreq(opts, req, res)
 	return
 }
 
-async function handle_request(opts, req, res)
+function handle_request(opts, req, res)
 {
 	console.log("%s - %s", req.method, req.url)
-	if (req.method == "GET" && req.url == "/") {
-		handle_static_payreq(opts, req, res)
-		return
 
-	} else if (req.method == "GET" && req.url.startsWith("/pr")) {
-		await handle_payreq(opts, req, res)
+	if (req.method == "GET") {
+		const parsed = url.parse(req.url)
+		const qs = querystring.parse(parsed.query)
+
+		if (qs && qs.amount) {
+			handle_payreq(qs.amount, opts, req, res)
+			return
+		}
+
+		handle_static_payreq(opts, req, res)
 		return
 	}
 
