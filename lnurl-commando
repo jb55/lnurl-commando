@@ -3,19 +3,11 @@
 const create_server = require('./')
 // bin stuff (move this?)
 
-
 async function main()
 {
-	const args = process.argv.slice(2)
-	const opts = {
-		nodeid: args[0] || process.env.NODEID,
-		host: args[1] || process.env.HOST,
-		rune: args[2] || process.env.RUNE,
-		callback: args[3] || process.env.LNURL_CALLBACK,
-		description: args[4] || process.env.INVOICE_DESCRIPTION,
-	}
+	const opts = require('minimist')(process.argv.slice(2))
 
-	if (!opts.nodeid || !opts.host || !opts.rune || !opts.callback)
+	if (!opts.nodeid || !opts.host || !opts.rune || !opts.callback || !opts.description)
 		return usage()
 
 	const server = await create_server(opts)
@@ -29,8 +21,14 @@ if (!module.parent) {
 	main()
 }
 
-
 function usage() {
-	console.log("usage: lnurl-commando <nodeid> <commando-host> <rune> <lnurl-callback> <invoice-description>")
+	console.log("usage: lnurl-commando --nodeid <nodeid>")
+	console.log("                      --host <commando-host>")
+	console.log("                      --rune <rune>")
+	console.log("                      --callback <lnurl-callback>")
+	console.log("                      --description <invoice-description>")
+	console.log("                      --longDescription <invoice-long-description>")
+	console.log("                      --thumbnail <png|jpg path>")
+	console.log("                      --identifier <email, vecndor, etc>")
 	process.exit(1)
 }

@@ -128,34 +128,3 @@ module.exports = create_server
 
 // bin stuff (move this?)
 
-
-async function main()
-{
-	const opts = require('minimist')(process.argv.slice(2))
-
-	if (!opts.nodeid || !opts.host || !opts.rune || !opts.callback || !opts.description)
-		return usage()
-
-	const server = await create_server(opts)
-
-	const port = +process.env.PORT || 8083
-	console.log("lnurl-commando listening on port " + port)
-	server.listen(port)
-}
-
-if (!module.parent) {
-	main()
-}
-
-
-function usage() {
-	console.log("usage: lnurl-commando --nodeid <nodeid>")
-	console.log("                      --host <commando-host>")
-	console.log("                      --rune <rune>")
-	console.log("                      --callback <lnurl-callback>")
-	console.log("                      --description <invoice-description>")
-	console.log("                      --longDescription <invoice-long-description>")
-	console.log("                      --thumbnail <png|jpg path>")
-	console.log("                      --identifier <email, vecndor, etc>")
-	process.exit(1)
-}
