@@ -7,9 +7,10 @@
   },
   "main": "index.js",
   "bin": {
-	"lnurl-commando": "./lnurl-commando"
+    "lnurl-commando": "./lnurl-commando"
   },
   "dependencies": {
-    "lnsocket": "^0.2.3"
+    "lnsocket": "^0.2.3",
+    "minimist": "^1.2.6"
   }
 }

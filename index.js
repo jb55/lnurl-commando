@@ -4,9 +4,16 @@ const querystring = require('querystring')
 const url = require('url')
 const http = require('http')
 const crypto = require('crypto')
+const fs = require('fs/promises')
+const path = require('path')
 
 async function create_server(opts={})
 {
+	if (opts.thumbnail) {
+		const image = await fs.readFile(opts.thumbnail)
+		opts.thumbnailType = path.extname(opts.thumbnail).slice(1).toLowerCase()
+		opts.thumbnail = image.toString('base64')
+	}
 	const server = http.createServer(handle_request.bind(null, opts))
 	return server
 }
@@ -51,15 +58,26 @@ async function make_invoice(opts, amount)
 
 function handle_static_payreq(opts, req, res)
 {
+	let metadata = []
+	if (opts.description) {
+		metadata.push(["text/plain", opts.description])
+	}
+	if (opts.longDescription) {
+		metadata.push([`text/long-desc`, opts.longDescription])
+	}
+	if (opts.identifier) {
+		metadata.push(["text/identifier", opts.identifier])
+	}
+	if (opts.thumbnail) {
+		metadata.push([`image/${opts.thumbnailType};base64`, opts.thumbnail])
+	}
 	const resp = {
 		status: "OK",
 		tag: "payRequest",
 		minSendable: 1,
 		maxSendable: 10000000000,
 		callback: opts.callback,
-		metadata: JSON.stringify([
-			["text/plain", opts.description || "Hello from jb55.com!"]
-		])
+		metadata: JSON.stringify(metadata)
 	}
 	res.statusCode = 200
 	res.write(JSON.stringify(resp))
@@ -113,16 +131,9 @@ module.exports = create_server
 
 async function main()
 {
-	const args = process.argv.slice(2)
-	const opts = {
-		nodeid: args[0] || process.env.NODEID,
-		host: args[1] || process.env.HOST,
-		rune: args[2] || process.env.RUNE,
-		callback: args[3] || process.env.LNURL_CALLBACK,
-		description: args[4] || process.env.INVOICE_DESCRIPTION,
-	}
+	const opts = require('minimist')(process.argv.slice(2))
 
-	if (!opts.nodeid || !opts.host || !opts.rune || !opts.callback)
+	if (!opts.nodeid || !opts.host || !opts.rune || !opts.callback || !opts.description)
 		return usage()
 
 	const server = await create_server(opts)
@@ -138,6 +149,13 @@ if (!module.parent) {
 
 
 function usage() {
-	console.log("usage: lnurl-commando <nodeid> <commando-host> <rune> <lnurl-callback> <invoice-description>")
+	console.log("usage: lnurl-commando --nodeid <nodeid>")
+	console.log("                      --host <commando-host>")
+	console.log("                      --rune <rune>")
+	console.log("                      --callback <lnurl-callback>")
+	console.log("                      --description <invoice-description>")
+	console.log("                      --longDescription <invoice-long-description>")
+	console.log("                      --thumbnail <png|jpg path>")
+	console.log("                      --identifier <email, vecndor, etc>")
 	process.exit(1)
 }
