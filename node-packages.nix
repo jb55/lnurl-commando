@@ -13,6 +13,15 @@ let
         sha512 = "CI4cMKefLkwb//WEyjyiHnVp5z60kfbhWiiGctGfDsXxJ8kRpXt7VgaTHFDAQ4cUaJ+paMXtAItLyVRu0OVdqw==";
       };
     };
+    "minimist-1.2.6" = {
+      name = "minimist";
+      packageName = "minimist";
+      version = "1.2.6";
+      src = fetchurl {
+        url = "https://registry.npmjs.org/minimist/-/minimist-1.2.6.tgz";
+        sha512 = "Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==";
+      };
+    };
   };
   args = {
     name = "lnurl-commando";
@@ -21,6 +30,7 @@ let
     src = ./.;
     dependencies = [
       sources."lnsocket-0.2.3"
+      sources."minimist-1.2.6"
     ];
     buildInputs = globalBuildInputs;
     meta = {
