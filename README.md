@@ -17,7 +17,9 @@ usage: lnurl-commando --nodeid <nodeid>
                       --identifier <email, vecndor, etc>
 ```
 
-Make sure that the rune is restricted to the `invoice` method.
+Make sure that the rune is restricted to the `invoice` method:
+ 
+    $ lightning-cli commando-rune restrictions=method=invoice
 
 [^1]: https://github.com/jb55/lnsocket
 [^2]: https://github.com/lightningd/plugins/tree/master/commando
