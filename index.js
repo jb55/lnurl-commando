@@ -18,7 +18,7 @@ async function create_server(opts={})
 	return server
 }
 
-async function make_invoice(opts, amount)
+async function make_invoice(opts, amount, nostr)
 {
 	let bolt11 = null
 	const ln = await LNSocket()
@@ -31,7 +31,9 @@ async function make_invoice(opts, amount)
 			method: "invoice",
 			params: {
 				msatoshi: amount || "any",
-				description: opts.description,
+				expiry: 3600,
+				description: nostr,
+				deschashonly: true,
 				label: crypto.randomUUID().toString(),
 			}
 		});
@@ -77,17 +79,18 @@ function handle_static_payreq(opts, req, res)
 		minSendable: 1,
 		maxSendable: 10000000000,
 		callback: opts.callback,
-		metadata: JSON.stringify(metadata)
+		metadata: JSON.stringify(metadata),
+		allowsNostr: true
 	}
 	res.statusCode = 200
 	res.write(JSON.stringify(resp))
 	res.end()
 }
 
-async function handle_payreq(amount, opts, req, res)
+async function handle_payreq(amount, opts, req, res, nostr)
 {
 	try {
-		const pr = await make_invoice(opts, amount)
+		const pr = await make_invoice(opts, amount, nostr)
 		const routes = []
 		const resp = JSON.stringify({pr, routes})
 		res.statusCode = 200
@@ -108,8 +111,8 @@ function handle_request(opts, req, res)
 		const parsed = url.parse(req.url)
 		const qs = querystring.parse(parsed.query)
 
-		if (qs && qs.amount) {
-			handle_payreq(qs.amount, opts, req, res)
+		if (qs && qs.amount && qs.nostr) {
+			handle_payreq(qs.amount, opts, req, res, qs.nostr)
 			return
 		}
 
